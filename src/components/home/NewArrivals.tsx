@@ -11,7 +11,7 @@ export async function NewArrivals() {
     <Container
       as="section"
       aria-labelledby="novedades-titulo"
-      className="py-16 lg:py-24"
+      className="py-8 lg:py-12"
     >
       <SectionHeader
         id="novedades-titulo"

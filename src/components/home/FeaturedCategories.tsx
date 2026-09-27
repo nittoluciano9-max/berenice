@@ -12,7 +12,7 @@ export async function FeaturedCategories() {
     <Container
       as="section"
       aria-labelledby="categorias-titulo"
-      className="py-16 lg:py-24"
+      className="pt-6 pb-8 lg:pt-8 lg:pb-12"
     >
       <SectionHeader id="categorias-titulo" titulo="Elegí por categoría" />
       <ScrollRow>

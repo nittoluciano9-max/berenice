@@ -25,11 +25,11 @@ const PUNTOS = [
 export function ShippingInfo() {
   return (
     <section aria-labelledby="envios-titulo" className="bg-sand">
-      <Container className="py-14 lg:py-20">
+      <Container className="py-8 lg:py-10">
         <h2 id="envios-titulo" className="sr-only">
           Cómo comprar
         </h2>
-        <ul className="grid gap-8 sm:grid-cols-3 sm:gap-6">
+        <ul className="grid gap-6 sm:grid-cols-3">
           {PUNTOS.map(({ icono: Icono, titulo, texto }) => (
             <li key={titulo} className="flex gap-4 sm:flex-col sm:gap-3">
               <Icono
@@ -50,7 +50,7 @@ export function ShippingInfo() {
         </ul>
         <Link
           href="/envios-y-cambios"
-          className="mt-8 inline-flex min-h-11 items-center text-sm underline underline-offset-4 hover:text-muted-foreground"
+          className="mt-4 inline-flex min-h-11 items-center text-sm underline underline-offset-4 hover:text-muted-foreground"
         >
           Ver envíos y cambios
         </Link>

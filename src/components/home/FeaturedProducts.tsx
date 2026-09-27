@@ -12,7 +12,7 @@ export async function FeaturedProducts() {
     <Container
       as="section"
       aria-labelledby="destacados-titulo"
-      className="py-16 lg:py-24"
+      className="py-8 lg:py-12"
     >
       <SectionHeader
         id="destacados-titulo"

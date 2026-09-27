@@ -16,9 +16,9 @@ export function SectionHeader({
   link,
 }: SectionHeaderProps) {
   return (
-    <div className="mb-6 flex items-end justify-between gap-4 lg:mb-10">
+    <div className="mb-4 flex items-end justify-between gap-4 lg:mb-6">
       <div>
-        <h2 id={id} className="text-3xl lg:text-4xl">
+        <h2 id={id} className="text-2xl lg:text-3xl">
           {titulo}
         </h2>
         {bajada && (

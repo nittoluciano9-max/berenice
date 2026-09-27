@@ -16,7 +16,7 @@ export async function InstagramSection() {
     <Container
       as="section"
       aria-labelledby="instagram-titulo"
-      className="py-16 lg:py-24"
+      className="py-8 lg:py-12"
     >
       <SectionHeader
         id="instagram-titulo"
@@ -62,7 +62,7 @@ export async function InstagramSection() {
           asChild
           variant="outline"
           size="lg"
-          className="mt-8 w-full sm:w-auto"
+          className="mt-6 w-full sm:w-auto"
         >
           <a href={url} target="_blank" rel="noopener noreferrer">
             Ir a Instagram

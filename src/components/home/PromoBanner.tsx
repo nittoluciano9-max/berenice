@@ -13,14 +13,17 @@ export async function PromoBanner() {
 
   return (
     <section aria-labelledby="promo-titulo" className="bg-blush">
-      <Container className="flex flex-col items-center gap-5 py-14 text-center lg:py-20">
-        <p className="text-xs tracking-[0.3em] text-rosewood uppercase">
-          Ofertas
-        </p>
-        <h2 id="promo-titulo" className="max-w-lg text-4xl lg:text-5xl">
-          Hasta {maximo}% de descuento en prendas seleccionadas
-        </h2>
-        <Button asChild size="lg" className="mt-2 w-full sm:w-auto">
+      {/* Franja baja: en desktop, texto y botón en una sola línea. */}
+      <Container className="flex flex-col items-center gap-4 py-8 text-center lg:flex-row lg:justify-between lg:py-10 lg:text-left">
+        <div>
+          <p className="text-xs tracking-[0.3em] text-rosewood uppercase">
+            Ofertas
+          </p>
+          <h2 id="promo-titulo" className="mt-2 text-2xl lg:text-3xl">
+            Hasta {maximo}% de descuento en prendas seleccionadas
+          </h2>
+        </div>
+        <Button asChild size="lg" className="w-full shrink-0 sm:w-auto">
           <Link href="/productos?oferta=1">Ver ofertas</Link>
         </Button>
       </Container>
