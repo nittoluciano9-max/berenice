@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Menu } from "lucide-react";
 
+import { Logo } from "@/components/layout/Logo";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -39,8 +40,8 @@ export function MobileMenu({ categorias, instagramUrl }: MobileMenuProps) {
       </SheetTrigger>
       <SheetContent side="left" className="w-[85%] max-w-sm gap-0">
         <SheetHeader className="border-b px-6 py-5">
-          <SheetTitle className="tracking-[0.2em] uppercase">
-            Berenice
+          <SheetTitle>
+            <Logo className="size-14" maxSize={56} />
           </SheetTitle>
           <SheetDescription className="sr-only">
             Menú de navegación

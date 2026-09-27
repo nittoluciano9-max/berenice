@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { Container } from "@/components/layout/Container";
+import { Logo } from "@/components/layout/Logo";
 import { MobileMenu } from "@/components/layout/MobileMenu";
 import { SearchBar } from "@/components/layout/SearchBar";
 import { config } from "@/lib/config";
@@ -41,9 +42,9 @@ export async function Header() {
         <Link
           href="/"
           aria-label={`${config.siteName}, ir al inicio`}
-          className="font-serif text-2xl tracking-[0.25em] uppercase lg:text-3xl"
+          className="flex items-center"
         >
-          {config.siteName}
+          <Logo className="size-12 lg:size-14" maxSize={56} preload />
         </Link>
 
         {/* El carrito (etapa 5) se suma a la derecha de la búsqueda. */}

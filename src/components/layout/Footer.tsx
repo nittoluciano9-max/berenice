@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { Container } from "@/components/layout/Container";
+import { Logo } from "@/components/layout/Logo";
 import { getCategoryTree } from "@/lib/catalog";
 import { config } from "@/lib/config";
 import { allProductsLink, categoryHref, helpLinks } from "@/lib/navigation";
@@ -21,9 +22,7 @@ export async function Footer() {
     <footer className="bg-secondary">
       <Container className="grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4 lg:py-20">
         <div className="space-y-3">
-          <p className="font-serif text-2xl tracking-[0.25em] uppercase">
-            {config.siteName}
-          </p>
+          <Logo className="size-28" maxSize={112} />
           <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
             Lencería e indumentaria femenina.
           </p>

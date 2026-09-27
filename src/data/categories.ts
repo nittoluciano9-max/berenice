@@ -59,7 +59,8 @@ export const categories: Category[] = [
     imagen: "/images/categorias/ropa-de-dormir.png",
     parentId: null,
     orden: 2,
-    activo: true,
+    // Oculta por ahora; se reactiva cambiando este valor, sin tocar código.
+    activo: false,
   },
   {
     id: "cat-pijamas",
