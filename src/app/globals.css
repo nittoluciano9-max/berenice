@@ -1,26 +1,80 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-ivory: #faf7f2;
+  --color-sand: #efe6dc;
+  --color-nude: #d9b8a3;
+  --color-blush: #f3e3e1;
+  --color-ink: #1a1a1a;
+  --color-rosewood: #9e5a63;
+
+  --radius: 0.125rem;
+  --radius-sm: 0.125rem;
+  --radius-md: 0.25rem;
 }
 
+/* Alias semánticos que consumen los componentes de shadcn: siempre derivan de los tokens de marca. */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-cormorant), "Times New Roman", serif;
+  --font-sans: var(--font-jost), system-ui, sans-serif;
+
+  --color-background: var(--color-ivory);
+  --color-foreground: var(--color-ink);
+  --color-card: var(--color-ivory);
+  --color-card-foreground: var(--color-ink);
+  --color-popover: var(--color-ivory);
+  --color-popover-foreground: var(--color-ink);
+  --color-primary: var(--color-ink);
+  --color-primary-foreground: var(--color-ivory);
+  --color-secondary: var(--color-sand);
+  --color-secondary-foreground: var(--color-ink);
+  --color-muted: var(--color-sand);
+  --color-muted-foreground: color-mix(
+    in oklab,
+    var(--color-ink) 72%,
+    var(--color-ivory)
+  );
+  --color-accent: var(--color-blush);
+  --color-accent-foreground: var(--color-ink);
+  --color-destructive: var(--color-rosewood);
+  --color-border: color-mix(
+    in oklab,
+    var(--color-nude) 55%,
+    var(--color-ivory)
+  );
+  --color-input: var(--color-nude);
+  --color-ring: var(--color-ink);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    @apply border-border;
   }
-}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-background font-sans text-foreground antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-serif font-normal tracking-tight text-balance;
+  }
+
+  :focus-visible {
+    @apply outline-1 outline-offset-2 outline-ring;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
 }
