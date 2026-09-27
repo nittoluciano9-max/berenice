@@ -1,5 +1,6 @@
 import { categories } from "@/data/categories";
 import { products } from "@/data/products";
+import { hasOferta } from "@/lib/pricing";
 import type { Category, CategoryNode } from "@/types/category";
 import type { Product } from "@/types/product";
 
@@ -10,6 +11,8 @@ export interface GetProductsOptions {
   categoria?: string;
   destacado?: boolean;
   nuevo?: boolean;
+  /** true: solo productos con precio de oferta vigente. */
+  oferta?: boolean;
   limit?: number;
 }
 
@@ -71,7 +74,8 @@ export async function getProducts(
         inCategoria.has(p.categoria) ||
         (p.subcategoria !== null && inCategoria.has(p.subcategoria))) &&
       (options.destacado === undefined || p.destacado === options.destacado) &&
-      (options.nuevo === undefined || p.nuevo === options.nuevo),
+      (options.nuevo === undefined || p.nuevo === options.nuevo) &&
+      (options.oferta === undefined || hasOferta(p) === options.oferta),
   );
 
   return options.limit === undefined ? result : result.slice(0, options.limit);
@@ -91,6 +95,14 @@ export async function getCategoryTree(): Promise<CategoryNode[]> {
       .filter((c) => c.parentId === parentId)
       .map((c) => ({ ...c, children: build(c.id) }));
   return build(null);
+}
+
+/** Para la home: las subcategorías visibles de cada raíz, o la raíz si no tiene hijas. */
+export async function getFeaturedCategories(limit = 4): Promise<Category[]> {
+  const tree = await getCategoryTree();
+  return tree
+    .flatMap((root) => (root.children.length > 0 ? root.children : [root]))
+    .slice(0, limit);
 }
 
 export async function getCategoryBySlug(
