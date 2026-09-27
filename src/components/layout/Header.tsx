@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { Container } from "@/components/layout/Container";
 import { MobileMenu } from "@/components/layout/MobileMenu";
+import { SearchBar } from "@/components/layout/SearchBar";
 import { config } from "@/lib/config";
 import { getCategoryTree } from "@/lib/catalog";
 import { allProductsLink, categoryHref } from "@/lib/navigation";
@@ -45,8 +46,10 @@ export async function Header() {
           {config.siteName}
         </Link>
 
-        {/* Reservado para búsqueda (etapa 3) y carrito (etapa 5). */}
-        <div className="flex items-center justify-end" />
+        {/* El carrito (etapa 5) se suma a la derecha de la búsqueda. */}
+        <div className="flex items-center justify-end">
+          <SearchBar />
+        </div>
       </Container>
     </header>
   );
