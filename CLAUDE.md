@@ -7,7 +7,33 @@ Este archivo define reglas técnicas y alcance. Leelo antes de cualquier cambio.
 
 ## 1. Alcance
 
-### Versión actual: V1 — catálogo → carrito → WhatsApp
+### Versión actual: V2 — Administrable (en curso, por etapas)
+
+La V1 pública (catálogo → carrito → WhatsApp) está terminada y **no debe romperse**: toda etapa V2 la
+deja visual y funcionalmente igual salvo que el cambio se haya aprobado explícitamente.
+
+**Incluido en V2**
+
+- Panel protegido en `/admin` (solo administradores): productos, categorías y subcategorías (orden,
+  activo), precios y ofertas, imágenes, colores, talles, stock por variante color+talle, flags
+  nuevo/destacado/activo, configuración de tienda (WhatsApp, Instagram).
+- Supabase: PostgreSQL + Auth (solo admins, email + contraseña + TOTP) + Storage (imágenes).
+- `lib/catalog.ts` sigue siendo la única capa de acceso: la fuente pasa de mock a BD sin tocar la UI
+  (`CATALOG_SOURCE=mock|supabase`; producción en `mock` hasta V2.9).
+- Stock **editable** por el admin y mostrado en la tienda; sigue sin reservas ni descuento automático.
+- `noindex/nofollow` por defecto mientras el contenido sea provisorio (`NEXT_PUBLIC_ALLOW_INDEXING`).
+
+**Fuera de V2 — NO implementar**
+
+- Login, cuentas o datos de clientes (el cliente final no se loguea).
+- Mercado Pago o cualquier pago online.
+- Pedidos, reserva o descuento automático de stock (V3).
+- CMS, i18n, analytics de terceros, integración con la API de Instagram.
+
+Las fotos de `public/images/productos-reales/` se incorporan recién en V2.7/V2.9 (vía admin y Storage):
+no moverlas, borrarlas ni asignarlas a productos antes.
+
+### V1 (terminada) — referencia
 
 **Incluido en V1**
 
@@ -28,30 +54,34 @@ Este archivo define reglas técnicas y alcance. Leelo antes de cualquier cambio.
 - Integración con la API de Instagram (la sección es visual/mock).
 - CMS, i18n, analytics de terceros.
 
-Si una tarea parece requerir algo de esta lista, **frená y preguntá**.
+Si una tarea parece requerir algo fuera del alcance de la versión actual, **frená y preguntá**.
 
 ### Roadmap (solo referencia, no implementar)
 
-V2 BD + panel admin · V3 stock por variante + pedidos + clientes · V4 Mercado Pago / envíos (WhatsApp queda como segunda opción) · V5 ecommerce completo.
+V2 BD + panel admin + stock editable · V3 pedidos + descuento automático de stock + clientes · V4 Mercado Pago / envíos (WhatsApp queda como segunda opción) · V5 ecommerce completo.
 
 ---
 
 ## 2. Stack
 
-| Uso            | Paquete                                                                        |
-| -------------- | ------------------------------------------------------------------------------ |
-| Framework      | `next` 16 (App Router), `react` 19                                             |
-| Lenguaje       | TypeScript (`strict: true`)                                                    |
-| Estilos        | Tailwind CSS v4 (tokens en `@theme`, `globals.css`)                            |
-| UI             | shadcn/ui — **solo** los componentes usados (Sheet, Button, Accordion, Select) |
-| Íconos         | `lucide-react`                                                                 |
-| Estado carrito | `zustand` (+ `persist`)                                                        |
-| Utilidades     | `clsx`, `tailwind-merge`                                                       |
-| Calidad        | ESLint, Prettier + `prettier-plugin-tailwindcss`                               |
+| Uso            | Paquete                                                                                      |
+| -------------- | -------------------------------------------------------------------------------------------- |
+| Framework      | `next` 16 (App Router), `react` 19                                                           |
+| Lenguaje       | TypeScript (`strict: true`)                                                                  |
+| Estilos        | Tailwind CSS v4 (tokens en `@theme`, `globals.css`)                                          |
+| UI             | shadcn/ui — **solo** los componentes usados (Sheet, Button, Accordion, Select)               |
+| Íconos         | `lucide-react`                                                                               |
+| Estado carrito | `zustand` (+ `persist`)                                                                      |
+| Utilidades     | `clsx`, `tailwind-merge`                                                                     |
+| Calidad        | ESLint, Prettier + `prettier-plugin-tailwindcss`, tests con `node --test` (sin dependencias) |
+
+**Aprobados para V2** (se instalan en la etapa que los necesita, no antes): `@supabase/supabase-js`,
+`@supabase/ssr`, `zod` (validación compartida cliente/servidor) y el CLI oficial de Supabase vía `npx`
+(migraciones).
 
 **Dependencias al mínimo.** No agregar paquetes sin justificarlo y sin aprobación.
 Antes de instalar algo, preguntate si se resuelve con CSS, con la plataforma o con 20 líneas propias.
-Explícitamente evitados: librerías de carrusel (usar CSS scroll-snap), de formularios, de fechas, UI kits adicionales, SDKs de pago/auth.
+Explícitamente evitados: librerías de carrusel (usar CSS scroll-snap), de formularios (usar formularios nativos + `useActionState`), de fechas, UI kits adicionales, SDKs de pago y de auth distintos de Supabase.
 `motion` (Framer Motion) queda opcional y requiere aprobación.
 
 ---
@@ -71,6 +101,14 @@ Reglas:
 4. **Configuración centralizada** en `lib/config.ts` (lee `process.env.NEXT_PUBLIC_*`). Ningún componente lee `process.env` ni hardcodea número de WhatsApp, Instagram o dominio.
 5. **Categorías extensibles**: agregar una categoría o subcategoría es agregar datos, nunca código ni rutas nuevas.
 6. Páginas estáticas con `generateStaticParams` para producto y categoría.
+7. **Tienda y admin separados por route groups**: las páginas públicas viven en `app/(tienda)/` (el
+   grupo no aparece en la URL) con su marco en `StoreShell`; `/admin` tiene layout propio, siempre
+   `noindex`. El `not-found` raíz también usa `StoreShell`.
+8. **Reglas V2** (aplican desde la etapa que las introduce): la UI nunca importa el cliente de
+   Supabase, solo `lib/catalog` y `lib/admin`; los módulos de servidor llevan `import "server-only"`;
+   **toda Server Action del admin llama a `requireAdmin()`** (el `proxy.ts` es solo comodidad, no
+   seguridad); RLS en la BD como última red; nunca la service role key en el runtime de Vercel (solo
+   scripts locales); las escrituras del admin revalidan el catálogo por tag.
 
 ---
 
@@ -78,11 +116,13 @@ Reglas:
 
 ```
 src/
-  app/            layout.tsx, page.tsx, productos/, categoria/[slug]/, producto/[slug]/,
-                  guia-de-talles/, envios-y-cambios/, not-found.tsx, sitemap.ts, robots.ts, globals.css
+  app/            layout.tsx (html/body/fuentes/metadata), not-found.tsx, sitemap.ts, robots.ts, globals.css
+    (tienda)/     layout.tsx (StoreShell), page.tsx, productos/, categoria/[slug]/, producto/[slug]/,
+                  guia-de-talles/, envios-y-cambios/
+    admin/        layout.tsx (noindex), page.tsx (404 hasta V2.3)
   components/
     ui/           shadcn (no editar salvo estilos de marca)
-    layout/       Header, MobileMenu, Footer, FloatingWhatsApp, SearchBar
+    layout/       StoreShell, Header, MobileMenu, Footer, FloatingWhatsApp, SearchBar
     showcase/     vidriera de la home: ShopShowcase (URL) + ShowcaseView (layout 3 columnas),
                   CategorySidebar, CategoryChips, ShowcaseTabs, ShowcaseToolbar, MiniHero,
                   QuickAccess, CartQuickView
@@ -184,6 +224,9 @@ Localidad:
 
 - Avanzar **por etapas**; no generar todo el proyecto de una vez. Al terminar cada etapa, mostrar qué se hizo y esperar aprobación.
 - Etapas V1: 1) setup + layout · 2) tipos, mocks y `lib/catalog.ts` · 3) grilla, `/productos`, `/categoria` y filtros · 4) detalle de producto · 5) carrito · 6) WhatsApp + flotante · 7) home completa · 8) pulido mobile, SEO, `sitemap`, `not-found`.
+- Etapas V2: 2.0) route groups `(tienda)`/`admin` + noindex · 2.1) Supabase: esquema, RLS, Storage, seed · 2.2) catálogo dual mock/Supabase · 2.3) login `/admin` · 2.4) categorías · 2.5) productos · 2.6) colores, talles y stock · 2.7) imágenes · 2.8) configuración de tienda · 2.9) producción a BD (proyecto Supabase de producción aparte, vía migraciones versionadas).
+- Cada etapa V2 va en su rama `feature/v2-*` y antes de mergear pasa: `npm run build`, `npm run lint`, `npx tsc --noEmit`, `npx prettier --check .`, `npm test`, regresión de la tienda pública y preview en Vercel.
+- Migraciones de BD solo hacia adelante, con backup (`pg_dump`) previo y su reversión documentada.
 - Antes de dar una etapa por terminada: `npm run lint`, `npm run build` sin errores y revisión en viewport móvil.
 - Gestor de paquetes: **npm**. Node LTS.
 
@@ -193,6 +236,7 @@ Localidad:
 npm run dev     # desarrollo
 npm run build   # build de producción
 npm run lint    # lint
+npm test        # tests de lógica pura (node --test, src/**/*.test.ts)
 ```
 
 ## Variables de entorno
@@ -203,4 +247,8 @@ Ver `.env.example`:
 NEXT_PUBLIC_WHATSAPP_NUMBER=549XXXXXXXXXX
 NEXT_PUBLIC_INSTAGRAM_URL=https://instagram.com/berenice
 NEXT_PUBLIC_SITE_URL=https://berenice.com.ar
+NEXT_PUBLIC_ALLOW_INDEXING=false   # solo "true" habilita la indexación; cualquier otro valor = noindex
+CATALOG_SOURCE=mock                # mock | supabase (se lee desde V2.2)
 ```
+
+`NEXT_PUBLIC_*` se fija en el build: cambiarla en Vercel requiere redeploy.

@@ -4,6 +4,6 @@ Las reglas técnicas y el alcance del proyecto están en [`CLAUDE.md`](./CLAUDE.
 
 Resumen mínimo:
 
-- Versión actual: **V1** (catálogo → carrito → WhatsApp). Nada de backend, BD, login, pagos ni panel admin.
-- Stack: Next.js 16 + TypeScript + Tailwind v4 + shadcn/ui + lucide-react + zustand. No agregar dependencias sin aprobación.
-- Datos simulados en `src/data/`, siempre accedidos a través de `src/lib/catalog.ts`.
+- Versión actual: **V2 Administrable, en curso por etapas** (`feature/v2-*`). La V1 pública (catálogo → carrito → WhatsApp) no debe romperse. Sin login de clientes, pagos ni pedidos.
+- Stack: Next.js 16 + TypeScript + Tailwind v4 + shadcn/ui + lucide-react + zustand; para V2 están aprobados Supabase (`@supabase/supabase-js`, `@supabase/ssr`) y `zod`. No agregar otras dependencias sin aprobación.
+- Productos y categorías siempre a través de `src/lib/catalog.ts` (hoy datos simulados en `src/data/`).
