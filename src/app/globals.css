@@ -4,6 +4,9 @@
 /* Mientras la StickyBuyBar está en pantalla (p. ej. el WhatsApp flotante se corre arriba). */
 @custom-variant sticky-bar-visible (body:has([data-sticky-buy-bar][aria-hidden="false"]) &);
 
+/* En la home (vidriera): la columna de accesos rápidos ya tiene WhatsApp. */
+@custom-variant showcase (body:has([data-showcase]) &);
+
 @theme {
   --color-ivory: #faf7f2;
   --color-sand: #efe6dc;

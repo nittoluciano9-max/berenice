@@ -7,18 +7,18 @@ import { MobileMenu } from "@/components/layout/MobileMenu";
 import { SearchBar } from "@/components/layout/SearchBar";
 import { config } from "@/lib/config";
 import { getCategoryTree } from "@/lib/catalog";
-import { allProductsLink, categoryHref } from "@/lib/navigation";
+import { categoryHref, showcaseLinks } from "@/lib/navigation";
 
 export async function Header() {
   const categorias = await getCategoryTree();
   const links = [
     ...categorias.map((c) => ({ href: categoryHref(c.slug), label: c.nombre })),
-    allProductsLink,
+    ...showcaseLinks,
   ];
 
   return (
     <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur-sm">
-      <Container className="grid h-16 grid-cols-[1fr_auto_1fr] items-center lg:h-20">
+      <Container className="grid h-16 max-w-[100rem] grid-cols-[1fr_auto_1fr] items-center lg:h-20">
         <div className="flex items-center">
           <MobileMenu
             categorias={categorias}

@@ -27,11 +27,14 @@ interface ProductFiltersProps {
   queryString: string;
   resultCount: number;
   actions?: FilterActions;
+  /** "right" para desktop (vidriera de la home); por defecto, bottom sheet. */
+  side?: "bottom" | "right";
 }
 
 /** Filtros en bottom sheet para mobile; en desktop el mismo FilterPanel va en la barra lateral. */
 export function ProductFilters({
   resultCount,
+  side = "bottom",
   ...panelProps
 }: ProductFiltersProps) {
   const active = countActiveFilters(panelProps.filters);
@@ -47,7 +50,12 @@ export function ProductFilters({
           Filtrar{active > 0 && ` (${active})`}
         </Button>
       </SheetTrigger>
-      <SheetContent side="bottom" className="max-h-[85dvh] gap-0">
+      <SheetContent
+        side={side}
+        className={
+          side === "bottom" ? "max-h-[85dvh] gap-0" : "w-full gap-0 sm:max-w-sm"
+        }
+      >
         <SheetHeader className="border-b px-4 py-4">
           <SheetTitle className="text-xl">Filtros</SheetTitle>
           <SheetDescription className="sr-only">

@@ -67,7 +67,7 @@ Reglas:
 
 1. **La UI nunca importa `data/` directamente.** Todo acceso a productos/categorías pasa por `lib/catalog.ts` (`getProducts`, `getProductBySlug`, `getCategoryTree`, `getCategoryBySlug`, `getRelatedProducts`). Las funciones son `async` aunque hoy lean arrays, para migrar a BD sin tocar la UI.
 2. **Server Components por defecto.** `"use client"` solo donde hay interacción (carrito, selectores, filtros, menú, galería).
-3. **Filtros, orden y búsqueda viven en la URL** (`?cat=&talle=&color=&orden=&q=&oferta=`). Lógica pura en `lib/filters.ts`.
+3. **Filtros, orden y búsqueda viven en la URL** (`?cat=&talle=&color=&orden=&q=&oferta=`). Lógica pura en `lib/filters.ts`. La vidriera de la home reutiliza esos mismos parámetros y suma solo `?vista=nuevos` (tab "Nuevos"; "Ofertas" es `oferta=1`); su lógica pura está en `lib/showcase.ts`. En la home, cambiar de categoría agrega al historial; tabs y filtros lo reemplazan.
 4. **Configuración centralizada** en `lib/config.ts` (lee `process.env.NEXT_PUBLIC_*`). Ningún componente lee `process.env` ni hardcodea número de WhatsApp, Instagram o dominio.
 5. **Categorías extensibles**: agregar una categoría o subcategoría es agregar datos, nunca código ni rutas nuevas.
 6. Páginas estáticas con `generateStaticParams` para producto y categoría.
@@ -83,16 +83,19 @@ src/
   components/
     ui/           shadcn (no editar salvo estilos de marca)
     layout/       Header, MobileMenu, Footer, FloatingWhatsApp, SearchBar
-    home/         Hero, FeaturedCategories, FeaturedProducts, NewArrivals, PromoBanner,
-                  StyleSection, ShippingInfo, InstagramSection
+    showcase/     vidriera de la home: ShopShowcase (URL) + ShowcaseView (layout 3 columnas),
+                  CategorySidebar, CategoryChips, ShowcaseTabs, ShowcaseToolbar, MiniHero,
+                  QuickAccess, CartQuickView
+    home/         InstagramSection, SectionHeader
+    content/      ContentPage, SizeTable, WhatsAppHelp (páginas estáticas)
     product/      ProductCard, ProductGrid, ProductGallery, ProductFilters, ColorSelector,
                   SizeSelector, QuantitySelector, PriceTag, AddToCartButton, StickyBuyBar, RelatedProducts
-    category/     CategoryCard, Breadcrumbs
+    category/     Breadcrumbs
     cart/         CartDrawer, CartItem, CartSummary, CartButton, WhatsAppCheckout
   data/           products.ts, categories.ts, instagram.ts (mock)
-  lib/            catalog.ts, filters.ts, whatsapp.ts, currency.ts, config.ts, utils.ts
+  lib/            catalog.ts, filters.ts, showcase.ts, whatsapp.ts, currency.ts, config.ts, seo.ts, utils.ts
   store/          cart.ts
-  types/          product.ts, category.ts, cart.ts
+  types/          product.ts, category.ts, cart.ts, showcase.ts
 public/images/    fotos mock (vertical 4:5)
 ```
 

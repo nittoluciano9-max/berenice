@@ -16,7 +16,7 @@ export async function InstagramSection() {
     <Container
       as="section"
       aria-labelledby="instagram-titulo"
-      className="py-8 lg:py-12"
+      className="max-w-[100rem] py-8 lg:py-12"
     >
       <SectionHeader
         id="instagram-titulo"
