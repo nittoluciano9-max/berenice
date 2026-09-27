@@ -43,3 +43,5 @@ export interface Product {
   /** Fecha ISO (YYYY-MM-DD). */
   creadoEn?: string;
 }
+
+export type StockStatus = "disponible" | "ultimas" | "agotado";
