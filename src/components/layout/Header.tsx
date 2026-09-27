@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { CartButton } from "@/components/cart/CartButton";
 import { Container } from "@/components/layout/Container";
 import { Logo } from "@/components/layout/Logo";
 import { MobileMenu } from "@/components/layout/MobileMenu";
@@ -47,9 +48,9 @@ export async function Header() {
           <Logo className="size-12 lg:size-14" maxSize={56} preload />
         </Link>
 
-        {/* El carrito (etapa 5) se suma a la derecha de la búsqueda. */}
         <div className="flex items-center justify-end">
           <SearchBar />
+          <CartButton />
         </div>
       </Container>
     </header>

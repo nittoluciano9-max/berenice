@@ -8,6 +8,9 @@ interface SizeSelectorProps {
   value: string | null;
   onChange: (talle: string) => void;
   isDisponible: (talle: string) => boolean;
+  /** Mensaje cuando se intenta agregar sin elegir talle. */
+  error?: string;
+  ref?: React.Ref<HTMLDivElement>;
 }
 
 export function SizeSelector({
@@ -15,13 +18,22 @@ export function SizeSelector({
   value,
   onChange,
   isDisponible,
+  error,
+  ref,
 }: SizeSelectorProps) {
   const labelId = useId();
+  const errorId = useId();
 
   // radiogroup + aria-labelledby en vez de fieldset/legend: el legend no se deja maquetar
   // en una fila junto al link de la guía.
   return (
-    <div role="radiogroup" aria-labelledby={labelId}>
+    <div
+      ref={ref}
+      role="radiogroup"
+      aria-labelledby={labelId}
+      aria-invalid={error ? true : undefined}
+      aria-describedby={error ? errorId : undefined}
+    >
       <div className="mb-1 flex items-center justify-between">
         <p id={labelId} className="text-xs tracking-[0.18em] uppercase">
           Talle
@@ -68,6 +80,11 @@ export function SizeSelector({
           );
         })}
       </div>
+      {error && (
+        <p id={errorId} role="alert" className="mt-3 text-sm text-rosewood">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

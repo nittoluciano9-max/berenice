@@ -1,12 +1,16 @@
 "use client";
 
 import Link from "next/link";
+import { useRef } from "react";
 
+import { AddToCartButton } from "@/components/product/AddToCartButton";
 import { ColorSelector } from "@/components/product/ColorSelector";
 import { PriceTag } from "@/components/product/PriceTag";
 import { ProductGallery } from "@/components/product/ProductGallery";
 import { QuantitySelector } from "@/components/product/QuantitySelector";
 import { SizeSelector } from "@/components/product/SizeSelector";
+import { StickyBuyBar } from "@/components/product/StickyBuyBar";
+import { useAddToCart } from "@/hooks/useAddToCart";
 import { useProductSelection } from "@/hooks/useProductSelection";
 import { getDescuento } from "@/lib/pricing";
 import { getStock, isDisponible, STOCK_LABELS } from "@/lib/stock";
@@ -19,7 +23,24 @@ interface ProductDetailProps {
 
 export function ProductDetail({ product }: ProductDetailProps) {
   const selection = useProductSelection(product);
+  const sizeRef = useRef<HTMLDivElement>(null);
+  const buyRef = useRef<HTMLDivElement>(null);
+
+  const irAlTalle = () => {
+    const el = sizeRef.current;
+    el?.scrollIntoView({ behavior: "smooth", block: "center" });
+    el?.querySelector<HTMLInputElement>("input:not(:disabled)")?.focus({
+      preventScroll: true,
+    });
+  };
+  const { add, aviso, faltaTalle } = useAddToCart(
+    product,
+    selection,
+    irAlTalle,
+  );
+
   const descuento = getDescuento(product);
+  const agotado = selection.status === "agotado";
   const coloresAgotados = product.colores
     .filter((c) => !isDisponible(product, { colores: [c.slug] }))
     .map((c) => c.slug);
@@ -53,12 +74,14 @@ export function ProductDetail({ product }: ProductDetailProps) {
             />
           )}
           <SizeSelector
+            ref={sizeRef}
             talles={product.talles}
             value={selection.talle}
             onChange={selection.setTalle}
             isDisponible={(talle) =>
               getStock(product, selection.color, talle) > 0
             }
+            error={faltaTalle ? "Elegí un talle para continuar." : undefined}
           />
 
           <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
@@ -66,15 +89,16 @@ export function ProductDetail({ product }: ProductDetailProps) {
               value={selection.cantidad}
               max={selection.maxCantidad}
               onChange={selection.setCantidad}
-              disabled={selection.status === "agotado"}
+              disabled={agotado}
             />
             <p
               aria-live="polite"
               className={cn(
                 "text-sm",
-                selection.status === "ultimas" && "text-rosewood",
-                selection.status === null && "text-muted-foreground",
-                selection.status === "agotado" && "text-muted-foreground",
+                selection.status === "ultimas"
+                  ? "text-rosewood"
+                  : "text-muted-foreground",
+                selection.status === "disponible" && "text-foreground",
               )}
             >
               {selection.status
@@ -82,6 +106,13 @@ export function ProductDetail({ product }: ProductDetailProps) {
                 : "Elegí tu talle"}
             </p>
           </div>
+
+          <AddToCartButton
+            ref={buyRef}
+            onAdd={add}
+            agotado={agotado}
+            aviso={aviso}
+          />
         </div>
 
         <div className="mt-10 border-t pt-6">
@@ -103,6 +134,13 @@ export function ProductDetail({ product }: ProductDetailProps) {
           </p>
         </div>
       </div>
+
+      <StickyBuyBar
+        product={product}
+        onAdd={add}
+        agotado={agotado}
+        targetRef={buyRef}
+      />
     </div>
   );
 }

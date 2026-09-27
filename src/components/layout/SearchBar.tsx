@@ -26,7 +26,6 @@ export function SearchBar() {
       <Button
         variant="ghost"
         size="icon"
-        className="-mr-3"
         aria-label={open ? "Cerrar búsqueda" : "Buscar"}
         aria-expanded={open}
         aria-controls={panelId}

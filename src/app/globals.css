@@ -61,6 +61,13 @@
     @apply bg-background font-sans text-foreground antialiased;
   }
 
+  /* La StickyBuyBar es fija: se reserva su alto para que no tape el final del footer. */
+  @media (width < 64rem) {
+    body:has([data-sticky-buy-bar]) {
+      padding-bottom: calc(3.75rem + max(0.75rem, env(safe-area-inset-bottom)));
+    }
+  }
+
   h1,
   h2,
   h3,
