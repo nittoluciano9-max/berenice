@@ -24,6 +24,15 @@ export type VariantPatch = Pick<
   "color" | "colorNombre" | "talle" | "imagen"
 >;
 
+export type FormaEntrega = "envio" | "retiro";
+
+/** Datos opcionales del pedido; vacíos se envían como rótulos sin completar. */
+export interface DatosPedido {
+  nombre: string;
+  entrega: FormaEntrega | null;
+  localidad: string;
+}
+
 export interface AddResult {
   /** Unidades que se sumaron realmente (puede ser menos de lo pedido por el tope de stock). */
   agregadas: number;

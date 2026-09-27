@@ -2,8 +2,10 @@ import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Jost } from "next/font/google";
 
 import { CartDrawer } from "@/components/cart/CartDrawer";
+import { FloatingWhatsApp } from "@/components/layout/FloatingWhatsApp";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
+import { VisitOriginTracker } from "@/components/layout/VisitOriginTracker";
 import { config } from "@/lib/config";
 import "./globals.css";
 
@@ -47,6 +49,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <main className="flex flex-1 flex-col">{children}</main>
         <Footer />
         <CartDrawer />
+        <FloatingWhatsApp />
+        <VisitOriginTracker />
       </body>
     </html>
   );

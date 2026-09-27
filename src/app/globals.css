@@ -1,6 +1,9 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* Mientras la StickyBuyBar está en pantalla (p. ej. el WhatsApp flotante se corre arriba). */
+@custom-variant sticky-bar-visible (body:has([data-sticky-buy-bar][aria-hidden="false"]) &);
+
 @theme {
   --color-ivory: #faf7f2;
   --color-sand: #efe6dc;

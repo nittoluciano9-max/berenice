@@ -7,6 +7,7 @@ import { AddToCartButton } from "@/components/product/AddToCartButton";
 import { ColorSelector } from "@/components/product/ColorSelector";
 import { PriceTag } from "@/components/product/PriceTag";
 import { ProductGallery } from "@/components/product/ProductGallery";
+import { ProductInquiryLink } from "@/components/product/ProductInquiryLink";
 import { QuantitySelector } from "@/components/product/QuantitySelector";
 import { SizeSelector } from "@/components/product/SizeSelector";
 import { StickyBuyBar } from "@/components/product/StickyBuyBar";
@@ -112,6 +113,14 @@ export function ProductDetail({ product }: ProductDetailProps) {
             onAdd={add}
             agotado={agotado}
             aviso={aviso}
+          />
+          <ProductInquiryLink
+            nombre={product.nombre}
+            slug={product.slug}
+            talle={selection.talle}
+            colorNombre={
+              product.colores.find((c) => c.slug === selection.color)?.nombre
+            }
           />
         </div>
 

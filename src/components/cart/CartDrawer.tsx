@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 import { CartClearButton } from "@/components/cart/CartClearButton";
 import { CartItem } from "@/components/cart/CartItem";
 import { CartSummary } from "@/components/cart/CartSummary";
+import { OrderDetailsForm } from "@/components/cart/OrderDetailsForm";
+import { WhatsAppCheckout } from "@/components/cart/WhatsAppCheckout";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -16,6 +18,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { selectItemCount, useCartHydration, useCartStore } from "@/store/cart";
+import type { DatosPedido } from "@/types/cart";
 
 export function CartDrawer() {
   useCartHydration();
@@ -27,6 +30,12 @@ export function CartDrawer() {
   // Se abre desde afuera (badge, Agregar, StickyBuyBar) sin Dialog.Trigger: Radix no sabría
   // a dónde devolver el foco al cerrar.
   const opener = useRef<HTMLElement | null>(null);
+  // Vive acá (siempre montado) y no en el contenido del Sheet: sobrevive a cerrar y reabrir.
+  const [datos, setDatos] = useState<DatosPedido>({
+    nombre: "",
+    entrega: null,
+    localidad: "",
+  });
 
   return (
     <Sheet open={isOpen} onOpenChange={(next) => (next ? open() : close())}>
@@ -80,15 +89,23 @@ export function CartDrawer() {
           </div>
         ) : (
           <>
-            <ul className="flex-1 divide-y overflow-y-auto px-5">
-              {items.map((item) => (
-                <CartItem key={item.id} item={item} />
-              ))}
-            </ul>
+            <div className="flex-1 overflow-y-auto px-5">
+              <ul className="divide-y border-b">
+                {items.map((item) => (
+                  <CartItem key={item.id} item={item} />
+                ))}
+              </ul>
+              <OrderDetailsForm datos={datos} onChange={setDatos} />
+            </div>
 
             <SheetFooter className="gap-4 border-t px-5 pt-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
               <CartSummary />
-              {/* El botón de finalizar por WhatsApp se suma en la etapa 6. */}
+              {/* key: si cambia el pedido, se descarta el aviso (y el link) del envío anterior. */}
+              <WhatsAppCheckout
+                key={JSON.stringify([items, datos])}
+                items={items}
+                datos={datos}
+              />
               <div className="flex items-center justify-between gap-3 text-xs">
                 <button
                   type="button"
