@@ -3,9 +3,16 @@ export interface NavLink {
   label: string;
 }
 
-// Se reemplaza por getCategoryTree() en la etapa 2.
-export const mainNav: NavLink[] = [
-  { href: "/productos", label: "Productos" },
+export const allProductsLink: NavLink = {
+  href: "/productos",
+  label: "Ver todo",
+};
+
+export const helpLinks: NavLink[] = [
   { href: "/guia-de-talles", label: "Guía de talles" },
   { href: "/envios-y-cambios", label: "Envíos y cambios" },
 ];
+
+export function categoryHref(slug: string): string {
+  return `/categoria/${slug}`;
+}

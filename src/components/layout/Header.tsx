@@ -3,17 +3,27 @@ import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { MobileMenu } from "@/components/layout/MobileMenu";
 import { config } from "@/lib/config";
-import { mainNav } from "@/lib/navigation";
+import { getCategoryTree } from "@/lib/catalog";
+import { allProductsLink, categoryHref } from "@/lib/navigation";
 
-export function Header() {
+export async function Header() {
+  const categorias = await getCategoryTree();
+  const links = [
+    ...categorias.map((c) => ({ href: categoryHref(c.slug), label: c.nombre })),
+    allProductsLink,
+  ];
+
   return (
     <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur-sm">
       <Container className="grid h-16 grid-cols-[1fr_auto_1fr] items-center lg:h-20">
         <div className="flex items-center">
-          <MobileMenu links={mainNav} instagramUrl={config.instagramUrl} />
+          <MobileMenu
+            categorias={categorias}
+            instagramUrl={config.instagramUrl}
+          />
           <nav aria-label="Principal" className="hidden lg:block">
             <ul className="flex items-center gap-8">
-              {mainNav.map((link) => (
+              {links.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
