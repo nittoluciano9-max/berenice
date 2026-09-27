@@ -60,7 +60,7 @@ export function ProductGallery({ imagenes }: ProductGalleryProps) {
       </ul>
 
       {imagenes.length > 1 && (
-        <div className="absolute inset-x-0 bottom-3 flex justify-center gap-1 lg:hidden">
+        <div className="absolute inset-x-0 bottom-1 flex justify-center lg:hidden">
           {imagenes.map((imagen, i) => (
             <button
               key={imagen.src}
@@ -68,7 +68,8 @@ export function ProductGallery({ imagenes }: ProductGalleryProps) {
               onClick={() => irA(i)}
               aria-label={`Ver imagen ${i + 1} de ${imagenes.length}`}
               aria-current={i === activa}
-              className="flex size-8 items-center justify-center"
+              // Punto chico a la vista, pero área táctil de 44 px.
+              className="flex size-11 items-center justify-center"
             >
               <span
                 className={cn(

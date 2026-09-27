@@ -13,6 +13,8 @@ export const metadata: Metadata = {
   title: "Productos",
   description:
     "Toda la colección de lencería e indumentaria femenina de Berenice.",
+  // Filtros, orden y búsqueda viven en la URL: todas esas variantes apuntan a la misma canónica.
+  alternates: { canonical: "/productos" },
 };
 
 export default async function ProductosPage() {

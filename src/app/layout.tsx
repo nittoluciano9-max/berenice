@@ -7,6 +7,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { VisitOriginTracker } from "@/components/layout/VisitOriginTracker";
 import { config } from "@/lib/config";
+import { baseOpenGraph, defaultOgImage } from "@/lib/seo";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -31,6 +32,9 @@ export const metadata: Metadata = {
   },
   description:
     "Lencería e indumentaria femenina. Elegí tus prendas y hacé tu pedido por WhatsApp.",
+  applicationName: config.siteName,
+  openGraph: { ...baseOpenGraph, images: [defaultOgImage] },
+  twitter: { card: "summary_large_image" },
 };
 
 // Meta tag del navegador: no admite variables CSS, por eso repite el valor de --color-ivory.

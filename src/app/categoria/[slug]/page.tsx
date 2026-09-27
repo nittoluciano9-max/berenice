@@ -18,6 +18,7 @@ import {
   flattenCategoryTree,
 } from "@/lib/filters";
 import { categoryHref } from "@/lib/navigation";
+import { baseOpenGraph, defaultOgImage } from "@/lib/seo";
 import type { CategoryFilterConfig } from "@/types/filters";
 
 // Sin `dynamicParams = false` a propósito: cuando las categorías vengan de la BD (V2), una
@@ -33,7 +34,19 @@ export async function generateMetadata({
   const { slug } = await params;
   const categoria = await getCategoryBySlug(slug);
   if (!categoria) return {};
-  return { title: categoria.nombre, description: categoria.descripcion };
+  return {
+    title: categoria.nombre,
+    description: categoria.descripcion,
+    alternates: { canonical: categoryHref(slug) },
+    openGraph: {
+      ...baseOpenGraph,
+      title: categoria.nombre,
+      description: categoria.descripcion,
+      images: categoria.imagen
+        ? [{ url: categoria.imagen, alt: categoria.nombre }]
+        : [defaultOgImage],
+    },
+  };
 }
 
 export default async function CategoriaPage({
