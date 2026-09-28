@@ -1,26 +1,27 @@
-import { MessageCircle } from "lucide-react";
-
+import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
 import { config } from "@/lib/config";
+import { getColorLabel } from "@/lib/variants";
 import { buildProductInquiry, buildWhatsAppUrl } from "@/lib/whatsapp";
+import type { Product } from "@/types/product";
 
 interface ProductInquiryLinkProps {
-  nombre: string;
-  slug: string;
+  product: Pick<Product, "nombre" | "slug" | "colores" | "tipoVariante">;
+  /** Slug del color o estampa elegido. */
+  color: string;
   talle: string | null;
-  colorNombre?: string;
 }
 
 export function ProductInquiryLink({
-  nombre,
-  slug,
+  product,
+  color,
   talle,
-  colorNombre,
 }: ProductInquiryLinkProps) {
   const texto = buildProductInquiry({
-    nombre,
-    url: `${config.siteUrl}/producto/${slug}`,
+    nombre: product.nombre,
+    url: `${config.siteUrl}/producto/${product.slug}`,
     talle,
-    colorNombre,
+    colorNombre: product.colores.find((c) => c.slug === color)?.nombre,
+    colorLabel: getColorLabel(product),
   });
 
   return (
@@ -30,7 +31,7 @@ export function ProductInquiryLink({
       rel="noopener noreferrer"
       className="inline-flex min-h-11 items-center gap-2 text-sm underline underline-offset-4 hover:text-muted-foreground"
     >
-      <MessageCircle strokeWidth={1.5} className="size-4" />
+      <WhatsAppIcon strokeWidth={1.5} className="size-4" />
       Consultar por WhatsApp
       <span className="sr-only"> (se abre en una pestaña nueva)</span>
     </a>

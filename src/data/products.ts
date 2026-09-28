@@ -35,6 +35,22 @@ function imagenes(slug: string, nombre: string, cantidad = 2): ProductImage[] {
   }));
 }
 
+// Fotos reales (sin mover ni editar): se referencian donde están hasta migrarlas a Storage (V2.7/V2.9).
+const FOTOS_COLALESS = {
+  cerezas: {
+    src: "/images/productos-reales/bombachas-cerezas-negra.jpeg",
+    alt: "Colaless regulable negra con estampa de cerezas rojas, tiras laterales regulables y moño",
+  },
+  flores: {
+    src: "/images/productos-reales/bombachas-flores-blanca.jpeg",
+    alt: "Colaless regulable blanca con estampa de flores negras y rosas y tiras laterales regulables",
+  },
+  ondaRosa: {
+    src: "/images/productos-reales/bombachas-onda-rosa.jpeg",
+    alt: "Colaless regulable con estampa de ondas rosa y rojo, tiras laterales rojas y moño",
+  },
+} satisfies Record<string, ProductImage>;
+
 export const products: Product[] = [
   {
     id: "p-001",
@@ -203,7 +219,8 @@ export const products: Product[] = [
     stock: 30,
     destacado: false,
     nuevo: false,
-    activo: true,
+    // Oculto mientras Bombachas muestra el producto real (Colaless regulable).
+    activo: false,
     tags: ["encaje"],
     creadoEn: "2026-05-19",
   },
@@ -222,7 +239,8 @@ export const products: Product[] = [
     stock: 24,
     destacado: false,
     nuevo: false,
-    activo: true,
+    // Oculto mientras Bombachas muestra el producto real (Colaless regulable).
+    activo: false,
     tags: ["tul"],
     creadoEn: "2026-01-30",
   },
@@ -241,7 +259,8 @@ export const products: Product[] = [
     stock: 0,
     destacado: false,
     nuevo: false,
-    activo: true,
+    // Oculto mientras Bombachas muestra el producto real (Colaless regulable).
+    activo: false,
     tags: ["algodón", "tiro alto"],
     creadoEn: "2025-12-04",
   },
@@ -339,5 +358,65 @@ export const products: Product[] = [
     activo: true,
     tags: ["satén", "encaje"],
     creadoEn: "2026-08-27",
+  },
+  // ⚠️ PRODUCTO REAL CON DATOS TEMPORALES (mock). Precio, oferta, talles, stock, material y flags
+  // son provisorios: se reemplazan desde el panel /admin (V2.5/V2.6). Las fotos sí son reales.
+  // Mismo modelo en 3 estampas: se modelan como "colores" (misma lógica de stock y carrito) y la
+  // UI/el mensaje dicen "Estampa" por tipoVariante. El estampado de labios de una foto no se carga.
+  {
+    id: "p-015",
+    slug: "colaless-regulable",
+    nombre: "Colaless regulable",
+    descripcion:
+      "Colaless de microfibra elastizada con tiras laterales regulables y moño al frente. Tres estampas para elegir.",
+    categoria: "lenceria",
+    subcategoria: "bombachas",
+    precio: 12000,
+    precioOferta: 9900,
+    imagenes: [
+      FOTOS_COLALESS.cerezas,
+      FOTOS_COLALESS.flores,
+      FOTOS_COLALESS.ondaRosa,
+    ],
+    talles: ["S", "M", "L"],
+    tipoVariante: "estampa",
+    // hex = tono de respaldo; el selector muestra la foto de cada estampa.
+    colores: [
+      {
+        nombre: "Cerezas",
+        slug: "cerezas",
+        hex: "#1a1a1a",
+        imagenes: [FOTOS_COLALESS.cerezas],
+      },
+      {
+        nombre: "Flores",
+        slug: "flores",
+        hex: "#f7f4ee",
+        imagenes: [FOTOS_COLALESS.flores],
+      },
+      {
+        nombre: "Onda rosa",
+        slug: "onda-rosa",
+        hex: "#e7a1ad",
+        imagenes: [FOTOS_COLALESS.ondaRosa],
+      },
+    ],
+    stock: 37,
+    variantes: [
+      { color: "cerezas", talle: "S", stock: 4 },
+      { color: "cerezas", talle: "M", stock: 6 },
+      { color: "cerezas", talle: "L", stock: 3 },
+      { color: "flores", talle: "S", stock: 5 },
+      { color: "flores", talle: "M", stock: 4 },
+      { color: "flores", talle: "L", stock: 3 },
+      { color: "onda-rosa", talle: "S", stock: 3 },
+      { color: "onda-rosa", talle: "M", stock: 5 },
+      { color: "onda-rosa", talle: "L", stock: 4 },
+    ],
+    destacado: true,
+    nuevo: true,
+    activo: true,
+    tags: ["microfibra", "regulable", "estampado"],
+    creadoEn: "2026-09-27",
   },
 ];

@@ -1,5 +1,4 @@
-import { MessageCircle } from "lucide-react";
-
+import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
 import { Button } from "@/components/ui/button";
 import { config } from "@/lib/config";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
@@ -24,7 +23,7 @@ export function WhatsAppHelp({ titulo, texto, mensaje }: WhatsAppHelpProps) {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <MessageCircle strokeWidth={1.5} />
+          <WhatsAppIcon strokeWidth={1.5} />
           Escribinos por WhatsApp
           <span className="sr-only"> (se abre en una pestaña nueva)</span>
         </a>

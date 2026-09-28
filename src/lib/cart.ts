@@ -1,4 +1,5 @@
 import { getPrecioFinal } from "@/lib/pricing";
+import { getColorLabel } from "@/lib/variants";
 import type { AddResult, CartItem, VariantPatch } from "@/types/cart";
 import type { Product } from "@/types/product";
 
@@ -30,6 +31,10 @@ export function buildCartItem(
     imagen: getImagenForColor(product, color),
     color,
     colorNombre: product.colores.find((c) => c.slug === color)?.nombre ?? color,
+    // Solo si no es el default: los carritos ya guardados (sin el campo) siguen leyendo "Color".
+    ...(product.tipoVariante === "estampa" && {
+      colorLabel: getColorLabel(product),
+    }),
     talle,
     precioUnitario: getPrecioFinal(product),
     precioLista: product.precio,

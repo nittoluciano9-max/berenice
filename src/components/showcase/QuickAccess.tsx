@@ -1,7 +1,9 @@
-import { MessageCircle, Ruler, Truck } from "lucide-react";
+import { Ruler, Truck } from "lucide-react";
 import Link from "next/link";
 import { useId } from "react";
 
+import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
+import { CommunityLinks } from "@/components/community/CommunityLinks";
 import { CartQuickView } from "@/components/showcase/CartQuickView";
 import { Button } from "@/components/ui/button";
 import { config } from "@/lib/config";
@@ -26,19 +28,19 @@ export function QuickAccess({
   // Se renderiza dos veces (columna derecha y final de la grilla): ids únicos por instancia.
   const id = useId();
   return (
-    <div className={cn("grid content-start gap-4", className)}>
+    <div className={cn("grid content-start gap-3", className)}>
       {maxDescuento > 0 && (
-        <section aria-labelledby={`${id}-oferta`} className="bg-blush p-5">
+        <section aria-labelledby={`${id}-oferta`} className="bg-blush p-4">
           <p
             id={`${id}-oferta`}
             className="text-xs tracking-[0.18em] text-rosewood uppercase"
           >
             Oferta actual
           </p>
-          <p className="mt-2 font-serif text-2xl leading-tight">
+          <p className="mt-1 font-serif text-xl leading-tight">
             Hasta {maxDescuento}% de descuento
           </p>
-          <Button asChild className="mt-4 w-full">
+          <Button asChild className="mt-3 w-full">
             <Link href={ofertasHref} replace scroll={false}>
               Ver ofertas
             </Link>
@@ -46,7 +48,7 @@ export function QuickAccess({
         </section>
       )}
 
-      <section aria-labelledby={`${id}-ayuda`} className="border p-5 pt-4">
+      <section aria-labelledby={`${id}-ayuda`} className="border p-4 pt-3">
         <h2
           id={`${id}-ayuda`}
           className="font-sans text-xs tracking-[0.18em] uppercase"
@@ -84,7 +86,7 @@ export function QuickAccess({
               rel="noopener noreferrer"
               className={linkClass}
             >
-              <MessageCircle
+              <WhatsAppIcon
                 strokeWidth={1.5}
                 className="size-4 text-rosewood"
                 aria-hidden
@@ -96,6 +98,7 @@ export function QuickAccess({
         </ul>
       </section>
 
+      <CommunityLinks />
       <CartQuickView />
     </div>
   );

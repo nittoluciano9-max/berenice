@@ -30,8 +30,11 @@ deja visual y funcionalmente igual salvo que el cambio se haya aprobado explíci
 - Pedidos, reserva o descuento automático de stock (V3).
 - CMS, i18n, analytics de terceros, integración con la API de Instagram.
 
-Las fotos de `public/images/productos-reales/` se incorporan recién en V2.7/V2.9 (vía admin y Storage):
-no moverlas, borrarlas ni asignarlas a productos antes.
+**Producto real temporal:** "Colaless regulable" (`p-015` en `data/products.ts`) usa las fotos reales de
+`public/images/productos-reales/` (estampas Cerezas / Flores / Onda rosa, `tipoVariante: "estampa"`). Precio, oferta,
+talles, stock, material y flags son **valores mock provisorios** que se reemplazan desde `/admin` (V2.5/V2.6); las
+fotos se migran a Storage en V2.7/V2.9. No mover ni editar los archivos. Mientras tanto, los mocks de Bombachas
+(Culotte Sofía, Colaless Valentina, Vedetina Clara) están con `activo: false`; el resto de los mocks sigue activo.
 
 ### V1 (terminada) — referencia
 
@@ -126,14 +129,17 @@ src/
     showcase/     vidriera de la home: ShopShowcase (URL) + ShowcaseView (layout 3 columnas),
                   CategorySidebar, CategoryChips, ShowcaseTabs, ShowcaseToolbar, MiniHero,
                   QuickAccess, CartQuickView
-    home/         InstagramSection, SectionHeader
+    home/         SectionHeader
+    community/    CommunitySection, CommunityLinks, InstagramCard, InstagramPhotoGrid,
+                  WhatsAppGroupCard, WhatsAppGroupQr
+    icons/        InstagramIcon
     content/      ContentPage, SizeTable, WhatsAppHelp (páginas estáticas)
     product/      ProductCard, ProductGrid, ProductGallery, ProductFilters, ColorSelector,
                   SizeSelector, QuantitySelector, PriceTag, AddToCartButton, StickyBuyBar, RelatedProducts
     category/     Breadcrumbs
     cart/         CartDrawer, CartItem, CartSummary, CartButton, WhatsAppCheckout
   data/           products.ts, categories.ts, instagram.ts (mock)
-  lib/            catalog.ts, filters.ts, showcase.ts, whatsapp.ts, currency.ts, config.ts, seo.ts, utils.ts
+  lib/            catalog.ts, filters.ts, showcase.ts, checkout.ts, whatsapp.ts, variants.ts, qr.ts, currency.ts, config.ts, seo.ts, utils.ts
   store/          cart.ts
   types/          product.ts, category.ts, cart.ts, showcase.ts
 public/images/    fotos mock (vertical 4:5)
@@ -173,25 +179,50 @@ Reglas V1:
 - Número: `NEXT_PUBLIC_WHATSAPP_NUMBER` (formato `549XXXXXXXXXX`), leído **solo** en `lib/config.ts`.
 - `lib/whatsapp.ts` contiene **funciones puras**: `buildOrderMessage`, `buildWhatsAppUrl`, `buildProductInquiry`, `generateOrderCode`.
 - **Código de pedido `BER-XXXX`**: se genera localmente al finalizar, sirve **solo como referencia dentro del mensaje**. No se persiste, no es ID, no se usa para nada más.
-- Datos opcionales del formulario: Nombre, Forma de entrega (envío/retiro), Localidad. Si están vacíos, se envían los rótulos vacíos.
+- Formulario previo al pedido (validación pura en `lib/checkout.ts`; los errores se muestran al primer intento de
+  envío y el foco va al primer campo marcado): **Nombre y apellido** y **Celular** obligatorios · **Pago**
+  (Transferencia / Efectivo) y **Entrega** (Envío / Retiro) obligatorios · **Dirección** (calle, altura, localidad y
+  referencia, un solo campo) obligatoria **solo con Envío** (con Retiro se oculta y no va al mensaje) ·
+  **Comentario** opcional (máx. 300). Los datos personales viven solo en memoria: **nunca en localStorage**.
 - Origen de visita: si la URL trae `?ref=...` (QR, Instagram), se guarda en `sessionStorage` y se agrega como "Origen:" al mensaje.
 - Usar `encodeURIComponent` para el texto. No vaciar el carrito automáticamente al enviar.
-- Formato del mensaje:
+- Variantes: si el producto tiene `tipoVariante: "estampa"`, UI y mensaje dicen "Estampa" en vez de "Color" (misma
+  lógica de stock y carrito; ver `lib/variants.ts`).
+- Formato del mensaje (`*texto*` = negrita en WhatsApp; los comentarios con ← no forman parte del mensaje):
 
 ```
-Hola 👋
-Quiero realizar el siguiente pedido en Berenice (BER-XXXX):
+🛍️ *NUEVO PEDIDO · BERENICE*
+━━━━━━━━━━━━━━━━━━
+👤 *DATOS DEL CLIENTE*
+Nombre: Ana Pérez
+Celular: 341 555-1234
+Pago: Transferencia
+Entrega: Envío
+Dirección: Bv. Oroño 1234, Rosario     ← solo con Envío
+━━━━━━━━━━━━━━━━━━
+🩷 *PRODUCTOS*
 
 1x Conjunto Aurora
 Talle: M · Color: Negro
-Precio: $25.000
+$25.000
+━━━━━━━━━━━━━━━━━━
+💰 *TOTAL: $25.000*
+Ahorrás $X con ofertas                 ← solo si hay ofertas
+El envío se coordina por este chat.    ← con Retiro: "Coordinamos el retiro por este chat."
 
-Total: $25.000
-
-Nombre:
-Forma de entrega:
-Localidad:
+📝 *COMENTARIO*                         ← bloque solo si hay comentario
+…
+━━━━━━━━━━━━━━━━━━
+Código de pedido: BER-XXXX
+Origen: instagram                      ← solo si hay ?ref=
 ```
+
+### Comunidad
+
+- Instagram (`NEXT_PUBLIC_INSTAGRAM_URL`; el @usuario se deriva de la URL) y grupo de WhatsApp
+  (`NEXT_PUBLIC_WHATSAPP_GROUP_URL`), leídos solo en `lib/config.ts`. Si una variable está vacía, su bloque no se muestra.
+- El QR del grupo se genera en el servidor (`lib/qr.ts`, paquete `qrcode`) desde la **misma** variable que el botón.
+- lucide 1.x no trae logos de marcas: `components/icons/InstagramIcon` replica su grilla y trazo.
 
 ---
 
@@ -245,8 +276,9 @@ Ver `.env.example`:
 
 ```
 NEXT_PUBLIC_WHATSAPP_NUMBER=549XXXXXXXXXX
-NEXT_PUBLIC_INSTAGRAM_URL=https://instagram.com/berenice
+NEXT_PUBLIC_INSTAGRAM_URL=https://www.instagram.com/berenice_lenceria/
 NEXT_PUBLIC_SITE_URL=https://berenice.com.ar
+NEXT_PUBLIC_WHATSAPP_GROUP_URL=https://chat.whatsapp.com/…   # QR + botón del grupo; vacía = se oculta
 NEXT_PUBLIC_ALLOW_INDEXING=false   # solo "true" habilita la indexación; cualquier otro valor = noindex
 CATALOG_SOURCE=mock                # mock | supabase (se lee desde V2.2)
 ```

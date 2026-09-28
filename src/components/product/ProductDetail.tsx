@@ -16,6 +16,7 @@ import { useProductSelection } from "@/hooks/useProductSelection";
 import { getDescuento } from "@/lib/pricing";
 import { getStock, isDisponible, STOCK_LABELS } from "@/lib/stock";
 import { cn } from "@/lib/utils";
+import { getColorLabel } from "@/lib/variants";
 import type { Product } from "@/types/product";
 
 interface ProductDetailProps {
@@ -68,6 +69,8 @@ export function ProductDetail({ product }: ProductDetailProps) {
         <div className="mt-8 space-y-8">
           {product.colores.length > 0 && (
             <ColorSelector
+              label={getColorLabel(product)}
+              conFoto={product.tipoVariante === "estampa"}
               colores={product.colores}
               value={selection.color}
               onChange={selection.setColor}
@@ -115,12 +118,9 @@ export function ProductDetail({ product }: ProductDetailProps) {
             aviso={aviso}
           />
           <ProductInquiryLink
-            nombre={product.nombre}
-            slug={product.slug}
+            product={product}
+            color={selection.color}
             talle={selection.talle}
-            colorNombre={
-              product.colores.find((c) => c.slug === selection.color)?.nombre
-            }
           />
         </div>
 

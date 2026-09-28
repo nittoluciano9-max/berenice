@@ -1,9 +1,10 @@
 "use client";
 
-import { MessageCircle } from "lucide-react";
 import { useState } from "react";
 
+import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
 import { Button } from "@/components/ui/button";
+import { hasErrors, validateOrderDetails } from "@/lib/checkout";
 import { config } from "@/lib/config";
 import { getVisitOrigin } from "@/lib/origin";
 import {
@@ -16,13 +17,24 @@ import type { CartItem, DatosPedido } from "@/types/cart";
 interface WhatsAppCheckoutProps {
   items: CartItem[];
   datos: DatosPedido;
+  /** Se llama si faltan datos: el drawer marca los errores y enfoca el primero. */
+  onInvalid: () => void;
+  /** Hubo un intento y todavía hay errores: aviso junto al botón. */
+  invalido: boolean;
 }
 
-export function WhatsAppCheckout({ items, datos }: WhatsAppCheckoutProps) {
+export function WhatsAppCheckout({
+  items,
+  datos,
+  onInvalid,
+  invalido,
+}: WhatsAppCheckoutProps) {
   const [enviado, setEnviado] = useState<{ codigo: string; url: string }>();
 
   // El código se genera al finalizar; el carrito no se vacía por si hay que corregir el pedido.
   const enviar = () => {
+    // El botón nunca se deshabilita: al tocarlo se ve qué falta, en vez de tener que adivinarlo.
+    if (hasErrors(validateOrderDetails(datos))) return onInvalid();
     const codigo = generateOrderCode();
     const texto = buildOrderMessage(items, {
       codigo,
@@ -38,9 +50,14 @@ export function WhatsAppCheckout({ items, datos }: WhatsAppCheckoutProps) {
   return (
     <div className="space-y-2">
       <Button size="lg" className="w-full" onClick={enviar}>
-        <MessageCircle strokeWidth={1.5} />
+        <WhatsAppIcon strokeWidth={1.5} />
         Enviar pedido por WhatsApp
       </Button>
+      {invalido && (
+        <p role="alert" className="text-center text-xs text-rosewood">
+          Revisá los datos marcados para poder enviar el pedido.
+        </p>
+      )}
       {enviado && (
         <p role="status" className="text-center text-xs text-muted-foreground">
           Abrimos WhatsApp con tu pedido {enviado.codigo}.{" "}

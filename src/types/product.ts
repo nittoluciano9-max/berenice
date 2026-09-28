@@ -33,6 +33,11 @@ export interface Product {
   imagenes: ProductImage[];
   talles: string[];
   colores: ProductColor[];
+  /**
+   * Cómo se muestra la variante de `colores` en UI y mensajes. "estampa": misma lógica de
+   * stock y carrito que un color, pero se lee "Estampa: Cerezas". Ausente = "color".
+   */
+  tipoVariante?: "color" | "estampa";
   /** Stock total simulado; si hay variantes, manda el stock de cada variante. */
   stock: number;
   variantes?: ProductVariant[];

@@ -10,6 +10,7 @@ import { QuantitySelector } from "@/components/product/QuantitySelector";
 import { useCartProduct } from "@/hooks/useCartProduct";
 import { formatPrice } from "@/lib/currency";
 import { getMaxCantidad } from "@/lib/stock";
+import { getItemColorLabel } from "@/lib/variants";
 import { useCartStore } from "@/store/cart";
 import type { CartItem as CartItemData } from "@/types/cart";
 
@@ -71,7 +72,7 @@ export function CartItem({ item }: CartItemProps) {
         </div>
 
         <p className="text-xs text-muted-foreground">
-          Talle: {item.talle} · Color: {item.colorNombre}
+          Talle: {item.talle} · {getItemColorLabel(item)}: {item.colorNombre}
           {product && !editando && (
             <>
               {" · "}

@@ -9,6 +9,7 @@ import { CartSummary } from "@/components/cart/CartSummary";
 import { OrderDetailsForm } from "@/components/cart/OrderDetailsForm";
 import { WhatsAppCheckout } from "@/components/cart/WhatsAppCheckout";
 import { Button } from "@/components/ui/button";
+import { EMPTY_ORDER, hasErrors, validateOrderDetails } from "@/lib/checkout";
 import {
   Sheet,
   SheetContent,
@@ -31,11 +32,25 @@ export function CartDrawer() {
   // a dónde devolver el foco al cerrar.
   const opener = useRef<HTMLElement | null>(null);
   // Vive acá (siempre montado) y no en el contenido del Sheet: sobrevive a cerrar y reabrir.
-  const [datos, setDatos] = useState<DatosPedido>({
-    nombre: "",
-    entrega: null,
-    localidad: "",
-  });
+  // Solo en memoria: celular y dirección nunca van a localStorage.
+  const [datos, setDatos] = useState<DatosPedido>(EMPTY_ORDER);
+  // Los errores se muestran recién después del primer intento de envío.
+  const [intentado, setIntentado] = useState(false);
+  const errores = intentado ? validateOrderDetails(datos) : {};
+  const cuerpo = useRef<HTMLDivElement>(null);
+
+  const onInvalid = () => {
+    setIntentado(true);
+    // Tras el render con los errores: foco (y scroll) al primer campo marcado.
+    requestAnimationFrame(() => {
+      // Campos de texto (aria-invalid) o grupos de opciones (data-invalid), en orden del DOM.
+      const campo = cuerpo.current?.querySelector<HTMLElement>(
+        '[aria-invalid="true"], [data-invalid] input',
+      );
+      campo?.scrollIntoView({ block: "center" });
+      campo?.focus({ preventScroll: true });
+    });
+  };
 
   return (
     <Sheet open={isOpen} onOpenChange={(next) => (next ? open() : close())}>
@@ -89,13 +104,17 @@ export function CartDrawer() {
           </div>
         ) : (
           <>
-            <div className="flex-1 overflow-y-auto px-5">
+            <div ref={cuerpo} className="flex-1 overflow-y-auto px-5">
               <ul className="divide-y border-b">
                 {items.map((item) => (
                   <CartItem key={item.id} item={item} />
                 ))}
               </ul>
-              <OrderDetailsForm datos={datos} onChange={setDatos} />
+              <OrderDetailsForm
+                datos={datos}
+                onChange={setDatos}
+                errores={errores}
+              />
             </div>
 
             <SheetFooter className="gap-4 border-t px-5 pt-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
@@ -105,6 +124,8 @@ export function CartDrawer() {
                 key={JSON.stringify([items, datos])}
                 items={items}
                 datos={datos}
+                onInvalid={onInvalid}
+                invalido={hasErrors(errores)}
               />
               <div className="flex items-center justify-between gap-3 text-xs">
                 <button

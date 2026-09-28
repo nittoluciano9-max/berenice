@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import { getImagenForColor } from "@/lib/cart";
 import { getMaxCantidad, getStock, isDisponible } from "@/lib/stock";
+import { getColorLabel } from "@/lib/variants";
 import { useCartStore } from "@/store/cart";
 import type { CartItem } from "@/types/cart";
 import type { Product } from "@/types/product";
@@ -55,7 +56,10 @@ export function CartVariantEditor({
     <div className="mt-3 space-y-3 bg-secondary/50 p-3">
       <div className="grid grid-cols-2 gap-2">
         <Select value={color} onValueChange={onColorChange}>
-          <SelectTrigger aria-label="Color" className="w-full bg-background">
+          <SelectTrigger
+            aria-label={getColorLabel(product)}
+            className="w-full bg-background"
+          >
             <SelectValue>{colorNombre}</SelectValue>
           </SelectTrigger>
           <SelectContent position="popper">

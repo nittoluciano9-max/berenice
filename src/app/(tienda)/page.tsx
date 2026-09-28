@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
-import { InstagramSection } from "@/components/home/InstagramSection";
+import { CommunitySection } from "@/components/community/CommunitySection";
 import { ShopShowcase } from "@/components/showcase/ShopShowcase";
 import { ShowcaseView } from "@/components/showcase/ShowcaseView";
 import { getCategoryTree, getProducts } from "@/lib/catalog";
@@ -36,7 +36,7 @@ export default async function HomePage() {
       >
         <ShopShowcase {...data} />
       </Suspense>
-      <InstagramSection />
+      <CommunitySection />
     </>
   );
 }

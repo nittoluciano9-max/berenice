@@ -10,6 +10,8 @@ export interface CartItem {
   color: string;
   /** Nombre visible del color, para la UI y el mensaje de WhatsApp. */
   colorNombre: string;
+  /** Cómo se nombra la variante ("Estampa" en prendas estampadas); ausente = "Color". */
+  colorLabel?: string;
   talle: string;
   /** Precio vigente al agregar (oferta si corresponde), en pesos enteros. */
   precioUnitario: number;
@@ -25,13 +27,21 @@ export type VariantPatch = Pick<
 >;
 
 export type FormaEntrega = "envio" | "retiro";
+export type FormaPago = "transferencia" | "efectivo";
 
-/** Datos opcionales del pedido; vacíos se envían como rótulos sin completar. */
+/** Datos del formulario previo al pedido. Viven solo en memoria: nunca en localStorage. */
 export interface DatosPedido {
+  /** Nombre y apellido. Obligatorio. */
   nombre: string;
+  celular: string;
+  pago: FormaPago | null;
   entrega: FormaEntrega | null;
-  localidad: string;
+  /** Obligatoria solo con envío: calle, altura, localidad y referencia en un campo. */
+  direccion: string;
+  comentario: string;
 }
+
+export type OrderErrors = Partial<Record<keyof DatosPedido, string>>;
 
 export interface AddResult {
   /** Unidades que se sumaron realmente (puede ser menos de lo pedido por el tope de stock). */

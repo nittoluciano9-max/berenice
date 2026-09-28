@@ -12,5 +12,7 @@ export const config = {
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   whatsappNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "",
   instagramUrl: process.env.NEXT_PUBLIC_INSTAGRAM_URL ?? "",
+  /** Invitación al grupo de WhatsApp. Vacía = no se muestra nada del grupo (ni QR ni botón). */
+  whatsappGroupUrl: process.env.NEXT_PUBLIC_WHATSAPP_GROUP_URL ?? "",
   allowIndexing: isIndexingAllowed(process.env.NEXT_PUBLIC_ALLOW_INDEXING),
 } as const;

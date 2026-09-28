@@ -25,7 +25,7 @@ export function CartQuickView() {
   const open = useCartStore((s) => s.open);
 
   return (
-    <section aria-labelledby={id} className="border p-5">
+    <section aria-labelledby={id} className="border p-4">
       <h2
         id={id}
         className="flex items-center gap-2 font-sans text-xs tracking-[0.18em] uppercase"
