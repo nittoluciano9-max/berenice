@@ -140,9 +140,14 @@ src/
     cart/         CartDrawer, CartItem, CartSummary, CartButton, WhatsAppCheckout
   data/           products.ts, categories.ts, instagram.ts (mock)
   lib/            catalog.ts, filters.ts, showcase.ts, checkout.ts, whatsapp.ts, variants.ts, qr.ts, currency.ts, config.ts, seo.ts, utils.ts
+    supabase/     env.ts, public.ts (lectura del catálogo, sin cookies), server.ts (sesión admin), browser.ts
   store/          cart.ts
-  types/          product.ts, category.ts, cart.ts, showcase.ts
-public/images/    fotos mock (vertical 4:5)
+  types/          product.ts, category.ts, cart.ts, showcase.ts, database.ts (generado: npm run db:types)
+public/images/    fotos mock (vertical 4:5) y productos-reales/
+supabase/         config.toml, migrations/ (esquema, RLS, Storage, auditoría, permisos, relaciones),
+                  rollback/ (reversión documentada), seed.sql (generado)
+scripts/          generate-seed.ts, verify-rls.ts
+test/             loader de alias @/ para node --test
 ```
 
 ---
@@ -268,7 +273,28 @@ npm run dev     # desarrollo
 npm run build   # build de producción
 npm run lint    # lint
 npm test        # tests de lógica pura (node --test, src/**/*.test.ts)
+
+# Base de datos (Supabase; proyecto de desarrollo berenice-dev, vinculado con `npx supabase link`)
+npm run db:seed:generate  # regenera supabase/seed.sql desde src/data/*.ts (determinista)
+npm run db:push           # aplica migraciones pendientes + seed al proyecto vinculado
+npm run db:types          # regenera src/types/database.ts desde la BD
+npm run db:verify         # verifica RLS/Storage con la clave pública (exit 1 si algo falla)
 ```
+
+## Base de datos (V2)
+
+- Esquema en `supabase/migrations/` (timestamp + nombre), **solo hacia adelante**: nunca editar una
+  migración ya aplicada; cada cambio es una migración nueva con su reversión en `supabase/rollback/`.
+- Antes de aplicar: `npx supabase db push --dry-run`. Después: `npm run db:types` y `npm run db:verify`.
+- Dos capas de seguridad independientes: **GRANT** (qué tablas puede tocar cada rol) + **RLS** (qué filas).
+  `anon` solo lee; `authenticated` escribe únicamente si está en `public.admins` (`private.is_admin()`).
+- Las funciones de seguridad viven en el schema `private` (no expuesto por la API).
+- `products.legacy_id` conserva los `p-00x` del mock; `products.stock` aplica solo a productos sin variantes.
+- Storage: bucket `catalogo` (lectura pública por URL, sin listado anónimo; escritura solo admin),
+  rutas `productos/{product_id}/…` y `categorias/{category_id}/…`.
+- Sin Docker no hay base local ni `supabase db dump`: se trabaja sobre `berenice-dev`.
+- Secretos: la contraseña de la BD, el token del CLI y la service role **nunca** van al chat, al repo
+  ni a Vercel. Para diagnosticar `.env.local`, mostrar solo estructura (prefijo, largo), nunca valores.
 
 ## Variables de entorno
 
@@ -281,6 +307,11 @@ NEXT_PUBLIC_SITE_URL=https://berenice.com.ar
 NEXT_PUBLIC_WHATSAPP_GROUP_URL=https://chat.whatsapp.com/…   # QR + botón del grupo; vacía = se oculta
 NEXT_PUBLIC_ALLOW_INDEXING=false   # solo "true" habilita la indexación; cualquier otro valor = noindex
 CATALOG_SOURCE=mock                # mock | supabase (se lee desde V2.2)
+NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co   # base, sin /rest/v1
+NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_…               # clave PÚBLICA (nunca la secret)
 ```
+
+Las variables de Supabase van solo en `.env.local` durante V2.1: Vercel no las necesita hasta que el
+runtime use la BD (V2.2 en previews; Production recién en V2.9).
 
 `NEXT_PUBLIC_*` se fija en el build: cambiarla en Vercel requiere redeploy.

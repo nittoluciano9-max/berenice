@@ -15,4 +15,7 @@ export const config = {
   /** Invitación al grupo de WhatsApp. Vacía = no se muestra nada del grupo (ni QR ni botón). */
   whatsappGroupUrl: process.env.NEXT_PUBLIC_WHATSAPP_GROUP_URL ?? "",
   allowIndexing: isIndexingAllowed(process.env.NEXT_PUBLIC_ALLOW_INDEXING),
+  /** Supabase (V2): URL del proyecto y clave pública (publishable/anon), protegida por RLS. */
+  supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
+  supabaseAnonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "",
 } as const;
